@@ -5,11 +5,11 @@ import { Option } from "./Option";
 import "./Question.css";
 
 const Question = () => {
-  const [quizState, dispacth] = useContext(QuizContext);
+  const [quizState, dispatch] = useContext(QuizContext);
   const currentQuestion = quizState.questions[quizState.currentQuestion];
 
   const onSelectOption = (option) => {
-    dispacth({
+    dispatch({
       type: "CHECK_ANSWER",
       payload: { answer: currentQuestion.answer, option },
     });
@@ -29,12 +29,26 @@ const Question = () => {
               key={option}
               answer={currentQuestion.answer}
               selectOption={() => onSelectOption(option)}
+              hide={quizState.optionToHide === option ? "hide" : null}
             />
           );
         })}
       </div>
+      {!quizState.answerSelected && !quizState.help && (
+        <>
+          {currentQuestion.tip && (
+            <button onClick={() => dispatch({ type: "SHOW_TIP" })}>Dica</button>
+          )}
+          <button onClick={() => dispatch({ type: "REMOVE_OPTION" })}>
+            Excluir uma
+          </button>
+        </>
+      )}
+      {!quizState.answerSelected && quizState.help === "tip" && (
+        <p>{currentQuestion.tip}</p>
+      )}
       {quizState.answerSelected && (
-        <button onClick={() => dispacth({ type: "CHANGE_QUESTION" })}>
+        <button onClick={() => dispatch({ type: "CHANGE_QUESTION" })}>
           Continuar
         </button>
       )}
